@@ -4,5 +4,6 @@ public enum OfferStatus {
     SKAPAD,
     REDIGERAD,
     TECKNAD,
-    AVVISAD
+    AVVISAD,
+    UTGÅNGEN
 }

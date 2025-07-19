@@ -16,7 +16,7 @@ import jakarta.persistence.OneToMany;
 import lombok.Builder;
 
 @Builder
-@Entity(name = "insurance_offerts")
+@Entity(name = "offers")
 public class Offer {
 
     @Id

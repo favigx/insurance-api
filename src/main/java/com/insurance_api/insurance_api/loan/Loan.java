@@ -15,6 +15,9 @@ public class Loan {
     private String bank;
     private double belopp;
 
+    public Loan() {
+    }
+
     public Loan(Long id, String bank, double belopp) {
         this.id = id;
         this.bank = bank;

@@ -44,6 +44,28 @@ public class OfferService {
 
     }
 
+    public OfferResponse updateOffer(OfferUpdateRequest offerUpdateRequest, Long offerId) {
+        Offer offerDb = offerRepository.findById(offerId)
+                .orElseThrow();
+        double insuredAmount = calculateInsuredAmount(offerUpdateRequest.getLån());
+        double premie = calculatePremium(insuredAmount);
+
+        ZonedDateTime created = ZonedDateTime.now();
+        ZonedDateTime validUntil = created.plusDays(30);
+
+        offerDb.setLån(offerUpdateRequest.getLån());
+        offerDb.setMånadskostnad(offerUpdateRequest.getMånadskostnad());
+        offerDb.setStatus(OfferStatus.REDIGERAD);
+        offerDb.setPremie(premie);
+        offerDb.setFörsäkratBelopp(insuredAmount);
+        offerDb.setSkapad(created);
+        offerDb.setGiltigTill(validUntil);
+
+        Offer savedOffer = saveOffer(offerDb);
+
+        return mapToOfferResponse(savedOffer, insuredAmount);
+    }
+
     private double calculateInsuredAmount(List<Loan> lån) {
         return lån.stream()
                 .mapToDouble(Loan::getBelopp)

@@ -38,6 +38,9 @@ public class Offer {
     private ZonedDateTime skapad;
     private ZonedDateTime giltigTill;
 
+    public Offer() {
+    }
+
     public Offer(Long id, String personnummer, List<Loan> lån, int månadskostnad, OfferStatus status, double premie,
             double försäkratBelopp, ZonedDateTime skapad, ZonedDateTime giltigTill) {
         this.id = id;

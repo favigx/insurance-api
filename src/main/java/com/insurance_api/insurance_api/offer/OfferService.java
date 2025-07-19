@@ -2,6 +2,7 @@ package com.insurance_api.insurance_api.offer;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,11 @@ public class OfferService {
 
     public Offer saveOffer(Offer offer) {
         return offerRepository.save(offer);
+    }
+
+    public Offer findOfferById(Long offerId) {
+        return offerRepository.findById(offerId)
+                .orElseThrow();
     }
 
     public OfferResponse createOffer(OfferRequest offerRequest) {
@@ -44,9 +50,24 @@ public class OfferService {
 
     }
 
+    public OfferResponse acceptOffer(Long offerId) {
+        Offer offerDb = findOfferById(offerId);
+
+        Set<OfferStatus> lockedStatuses = Set.of(OfferStatus.TECKNAD, OfferStatus.AVVISAD);
+
+        if (lockedStatuses.contains(offerDb.getStatus())) {
+            throw new IllegalStateException("Offerten är redan tecknad eller avvisad och kan inte längre accepteras.");
+        }
+
+        offerDb.setStatus(OfferStatus.TECKNAD);
+        Offer savedOffer = offerRepository.save(offerDb);
+
+        return mapToOfferResponse(savedOffer, savedOffer.getFörsäkratBelopp());
+    }
+
     public OfferResponse updateOffer(OfferUpdateRequest offerUpdateRequest, Long offerId) {
-        Offer offerDb = offerRepository.findById(offerId)
-                .orElseThrow();
+        Offer offerDb = findOfferById(offerId);
+
         double insuredAmount = calculateInsuredAmount(offerUpdateRequest.getLån());
         double premie = calculatePremium(insuredAmount);
 

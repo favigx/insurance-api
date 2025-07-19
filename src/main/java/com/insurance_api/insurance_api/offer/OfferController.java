@@ -25,10 +25,24 @@ public class OfferController {
         return ResponseEntity.status(HttpStatus.CREATED).body(offerResponse);
     }
 
+    @PostMapping("/{id}/accept")
+    public ResponseEntity<?> acceptOffer(@PathVariable Long id) {
+        try {
+            OfferResponse updatedOffer = offerService.acceptOffer(id);
+            return ResponseEntity.ok(updatedOffer);
+        } catch (IllegalStateException e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(e.getMessage());
+        }
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<OfferResponse> updateOffer(@RequestBody OfferUpdateRequest offerUpdateRequest,
+    public ResponseEntity<OfferResponse> updateOffer(
+            @RequestBody OfferUpdateRequest offerUpdateRequest,
             @PathVariable Long id) {
-        OfferResponse offerResponse = offerService.updateOffer(offerUpdateRequest, id);
-        return ResponseEntity.status(HttpStatus.CREATED).body(offerResponse);
+        OfferResponse offerResponse = offerService.updateOffer(offerUpdateRequest,
+                id);
+        return ResponseEntity.ok(offerResponse);
     }
 }

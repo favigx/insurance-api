@@ -13,6 +13,11 @@ import jakarta.transaction.Transactional;
 @Repository
 public interface OfferRepository extends JpaRepository<Offer, Long> {
 
+    // Sätter personnummer till null och ändrar status till 'UTGÅNGEN' för offerter
+    // som har passerat giltigTill datum. Ändrar ej offerter som redan är TECKNAD
+    // samt där personnummer redan är NULL
+    // Används för att anonymisera personuppgifter efter giltighetstidens slut
+    // (GDPR)
     @Modifying
     @Transactional
     @Query("UPDATE offers o SET o.personnummer = null, o.status = 'UTGÅNGEN' " +
@@ -21,6 +26,10 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
             "AND o.personnummer IS NOT NULL")
     int deletePersonalData(@Param("now") ZonedDateTime now);
 
+    // Räknar antalet offerter med status 'TECKNAD' som har accepterats sedan en
+    // viss tidpunkt
+    // Används för att ta fram statistik på acceptera offerter inom en viss
+    // tidsperiod
     @Query("SELECT COUNT(o) FROM offers o WHERE o.status = 'TECKNAD' AND o.tecknatDatum >= :withinDays")
     long countAcceptedOffersSince(@Param("withinDays") ZonedDateTime withinDays);
 }

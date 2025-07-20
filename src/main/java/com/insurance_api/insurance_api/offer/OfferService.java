@@ -12,6 +12,7 @@ import com.insurance_api.insurance_api.loan.Loan;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
+// Serviceklass för hantering av offerter
 @Service
 public class OfferService {
 
@@ -21,15 +22,18 @@ public class OfferService {
         this.offerRepository = offerRepository;
     }
 
+    // Sparar em offert i databasen
     public Offer saveOffer(Offer offer) {
         return offerRepository.save(offer);
     }
 
+    // Hämtar en offert baserat på ID
     public Offer findOfferById(Long offerId) {
         return offerRepository.findById(offerId)
                 .orElseThrow(() -> new EntityNotFoundException("Offert med id " + offerId + " hittades inte."));
     }
 
+    // Skapar en offert baserat på offerRequest
     public OfferResponse createOffer(OfferRequest offerRequest) {
         double insuredAmount = calculateInsuredAmount(offerRequest.getLån());
         double premie = calculatePremium(insuredAmount);
@@ -54,6 +58,8 @@ public class OfferService {
 
     }
 
+    // Accepterar en offert om den inte redan är tecknad, avvisad eller utgången
+    // Sätter även ett tecknatDatum till offerten
     public OfferResponse acceptOffer(Long offerId) {
         Offer offerDb = findOfferById(offerId);
 
@@ -74,6 +80,8 @@ public class OfferService {
         return mapToOfferResponse(savedOffer, savedOffer.getFörsäkratBelopp());
     }
 
+    // Uppdaterar en befintlig offert med nya värden
+    // Ny premie räknas ut baserat på de uppdaterade värdena
     public OfferResponse updateOffer(OfferUpdateRequest offerUpdateRequest, Long offerId) {
         Offer offerDb = findOfferById(offerId);
 
@@ -96,16 +104,19 @@ public class OfferService {
         return mapToOfferResponse(savedOffer, insuredAmount);
     }
 
+    // Uträkning för total lånekostnad
     private double calculateInsuredAmount(List<Loan> lån) {
         return lån.stream()
                 .mapToDouble(Loan::getBelopp)
                 .sum();
     }
 
+    // Uträkning för premie som är 3,8% av det totala försäkrade beloppet
     private double calculatePremium(double insuredAmount) {
         return insuredAmount * 0.038;
     }
 
+    // Konverterar Offer till ett OfferResponse med angivet försäkrat belopp
     private OfferResponse mapToOfferResponse(Offer offer, double insuredAmount) {
         return new OfferResponse(
                 offer.getId(),
@@ -120,6 +131,9 @@ public class OfferService {
                 offer.getTecknatDatum());
     }
 
+    // En schemalagd metod som körs varje dag klockan 00.00
+    // Kallar på en SQL-Query som anonymiserar personnummer och markerar offerter
+    // som "UTGÅNGEN" i databasen
     @Transactional
     @Scheduled(cron = "0 0 0 * * *")
     public int deletePersonalData() {

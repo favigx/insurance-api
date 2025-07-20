@@ -37,12 +37,13 @@ public class Offer {
     private double försäkratBelopp;
     private ZonedDateTime skapad;
     private ZonedDateTime giltigTill;
+    private ZonedDateTime tecknatDatum;
 
     public Offer() {
     }
 
     public Offer(Long id, String personnummer, List<Loan> lån, int månadskostnad, OfferStatus status, double premie,
-            double försäkratBelopp, ZonedDateTime skapad, ZonedDateTime giltigTill) {
+            double försäkratBelopp, ZonedDateTime skapad, ZonedDateTime giltigTill, ZonedDateTime tecknatDatum) {
         this.id = id;
         this.personnummer = personnummer;
         this.lån = lån;
@@ -52,6 +53,7 @@ public class Offer {
         this.försäkratBelopp = försäkratBelopp;
         this.skapad = skapad;
         this.giltigTill = giltigTill;
+        this.tecknatDatum = tecknatDatum;
     }
 
     public Long getId() {
@@ -124,5 +126,13 @@ public class Offer {
 
     public void setGiltigTill(ZonedDateTime giltigTill) {
         this.giltigTill = giltigTill;
+    }
+
+    public ZonedDateTime getTecknatDatum() {
+        return tecknatDatum;
+    }
+
+    public void setTecknatDatum(ZonedDateTime tecknatDatum) {
+        this.tecknatDatum = tecknatDatum;
     }
 }

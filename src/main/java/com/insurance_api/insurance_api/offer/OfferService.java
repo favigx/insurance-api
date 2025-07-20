@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.insurance_api.insurance_api.loan.Loan;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -26,7 +27,7 @@ public class OfferService {
 
     public Offer findOfferById(Long offerId) {
         return offerRepository.findById(offerId)
-                .orElseThrow();
+                .orElseThrow(() -> new EntityNotFoundException("Offert med id " + offerId + " hittades inte."));
     }
 
     public OfferResponse createOffer(OfferRequest offerRequest) {
@@ -56,6 +57,8 @@ public class OfferService {
     public OfferResponse acceptOffer(Long offerId) {
         Offer offerDb = findOfferById(offerId);
 
+        ZonedDateTime acceptedTime = ZonedDateTime.now();
+
         Set<OfferStatus> lockedStatuses = Set.of(OfferStatus.TECKNAD, OfferStatus.AVVISAD, OfferStatus.UTGÅNGEN);
 
         if (lockedStatuses.contains(offerDb.getStatus())) {
@@ -64,6 +67,8 @@ public class OfferService {
         }
 
         offerDb.setStatus(OfferStatus.TECKNAD);
+        offerDb.setTecknatDatum(acceptedTime);
+
         Offer savedOffer = offerRepository.save(offerDb);
 
         return mapToOfferResponse(savedOffer, savedOffer.getFörsäkratBelopp());
@@ -111,7 +116,8 @@ public class OfferService {
                 offer.getPremie(),
                 offer.getStatus(),
                 offer.getSkapad(),
-                offer.getGiltigTill());
+                offer.getGiltigTill(),
+                offer.getTecknatDatum());
     }
 
     @Transactional

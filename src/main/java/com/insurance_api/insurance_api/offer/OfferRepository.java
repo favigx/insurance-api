@@ -20,4 +20,7 @@ public interface OfferRepository extends JpaRepository<Offer, Long> {
             "AND o.status NOT IN ('TECKNAD') " +
             "AND o.personnummer IS NOT NULL")
     int deletePersonalData(@Param("now") ZonedDateTime now);
+
+    @Query("SELECT COUNT(o) FROM offers o WHERE o.status = 'TECKNAD' AND o.tecknatDatum >= :withinDays")
+    long countAcceptedOffersSince(@Param("withinDays") ZonedDateTime withinDays);
 }

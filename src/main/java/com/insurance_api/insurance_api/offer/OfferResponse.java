@@ -3,6 +3,7 @@ package com.insurance_api.insurance_api.offer;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.insurance_api.insurance_api.loan.Loan;
 
 public class OfferResponse {
@@ -17,11 +18,15 @@ public class OfferResponse {
     private ZonedDateTime skapad;
     private ZonedDateTime giltigTill;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private ZonedDateTime tecknatDatum;
+
     public OfferResponse() {
     }
 
     public OfferResponse(Long offerId, String personnummer, List<Loan> lån, int månadskostnad, double försäkratBelopp,
-            double premie, OfferStatus status, ZonedDateTime skapad, ZonedDateTime giltigTill) {
+            double premie, OfferStatus status, ZonedDateTime skapad, ZonedDateTime giltigTill,
+            ZonedDateTime tecknatDatum) {
         this.offerId = offerId;
         this.personnummer = personnummer;
         this.lån = lån;
@@ -31,6 +36,7 @@ public class OfferResponse {
         this.status = status;
         this.skapad = skapad;
         this.giltigTill = giltigTill;
+        this.tecknatDatum = tecknatDatum;
     }
 
     public Long getOfferId() {
@@ -103,5 +109,13 @@ public class OfferResponse {
 
     public void setGiltigTill(ZonedDateTime giltigTill) {
         this.giltigTill = giltigTill;
+    }
+
+    public ZonedDateTime getTecknatDatum() {
+        return tecknatDatum;
+    }
+
+    public void setTecknatDatum(ZonedDateTime tecknatDatum) {
+        this.tecknatDatum = tecknatDatum;
     }
 }

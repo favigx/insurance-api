@@ -26,15 +26,9 @@ public class OfferController {
     }
 
     @PostMapping("/{id}/accept")
-    public ResponseEntity<?> acceptOffer(@PathVariable Long id) {
-        try {
-            OfferResponse updatedOffer = offerService.acceptOffer(id);
-            return ResponseEntity.ok(updatedOffer);
-        } catch (IllegalStateException e) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(e.getMessage());
-        }
+    public ResponseEntity<OfferResponse> acceptOffer(@PathVariable Long id) {
+        OfferResponse updatedOffer = offerService.acceptOffer(id);
+        return ResponseEntity.ok(updatedOffer);
     }
 
     @PutMapping("/{id}")
